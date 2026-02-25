@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🔍 Проверка Источников - Интерактивный Чек-лист</title>
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-roboto@5.0.13/index.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --purple: #9D4EDD;
+            --dark: #2D3436;
+            --light: #F8F9FA;
+            --gradient-1: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+            --gradient-2: linear-gradient(135deg, #4ECDC4 0%, #9D4EDD 100%);
+            --gradient-3: linear-gradient(135deg, #FF6B6B 0%, #9D4EDD 100%);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            overflow-x: hidden;
+            padding-bottom: 90px;
+            touch-action: manipulation;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 25px 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        .header-img-container {
+            width: 100%;
+            max-width: 220px;
+            margin: 15px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            background: white;
+        }
+
+        .header-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Navigation Tabs - Desktop */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            padding: 10px 5px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab {
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            flex: 1;
+            min-width: 80px;
+            max-width: 140px;
+        }
+
+        .nav-tab.active {
+            background: var(--gradient-2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        /* Content Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.3;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        /* 7 Questions */
+        .question-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .question-number {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 1rem;
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: inline;
+        }
+
+        .question-desc {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+
+        /* Scoring Table - Mobile Optimized */
+        .scoring-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 15px 0;
+            border-radius: 10px;
+        }
+
+        .scoring-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .scoring-table th,
+        .scoring-table td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 2px solid #e9ecef;
+            font-size: 0.85rem;
+        }
+
+        .scoring-table th {
+            background: var(--gradient-2);
+            color: white;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .scoring-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .score-input {
+            width: 55px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .score-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+
+        /* Score Display */
+        .score-display {
+            text-align: center;
+            padding: 25px 20px;
+            background: var(--gradient-3);
+            border-radius: 20px;
+            color: white;
+            margin-top: 25px;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .score-verdict {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        .verdict-good {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+        }
+
+        .verdict-warning {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+        }
+
+        .verdict-bad {
+            background: linear-gradient(135deg, #d63031 0%, #e84393 100%);
+        }
+
+        /* AI Tips Section */
+        .ai-tips {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .ai-tip-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .ai-tip-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .ai-tip-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .ai-tip-desc {
+            opacity: 0.9;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Red Flags */
+        .red-flags {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .red-flags h3 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .red-flag-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .red-flag-icon {
+            font-size: 1.3rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .red-flag-item div {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Resources */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .resource-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: block;
+        }
+
+        .resource-card:active {
+            border-color: var(--secondary);
+            transform: scale(0.98);
+        }
+
+        .resource-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .resource-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .resource-url {
+            color: #666;
+            font-size: 0.8rem;
+            word-break: break-all;
+        }
+
+        .resource-card p {
+            margin-top: 8px;
+            color: #666;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: #e9ecef;
+            border-radius: 50px;
+            height: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-2);
+            border-radius: 50px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        /* Button */
+        .btn {
+            padding: 16px 30px;
+            background: var(--gradient-2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 300px;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+
+        /* Emoji decorations */
+        .emoji-decoration {
+            position: fixed;
+            font-size: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Checkbox styling */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .custom-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--secondary);
+            flex-shrink: 0;
+            touch-action: manipulation;
+        }
+
+        .checkbox-label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: modalPop 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-emoji {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-message {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            padding: 14px 35px;
+            background: var(--gradient-2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            touch-action: manipulation;
+        }
+
+        .modal-close:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+
+        /* Mobile Bottom Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 10px 10px;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+            backdrop-filter: blur(10px);
+            safe-area-inset-bottom: env(safe-area-inset-bottom);
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+        }
+
+        .mobile-nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            gap: 5px;
+        }
+
+        .mobile-nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            min-width: 60px;
+        }
+
+        .mobile-nav-tab.active {
+            color: var(--purple);
+            background: rgba(157, 78, 221, 0.15);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 20px 12px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            .header-img-container {
+                max-width: 180px;
+            }
+
+            .nav-tabs {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .card {
+                padding: 18px 15px;
+            }
+
+            .card h2 {
+                font-size: 1.3rem;
+            }
+
+            .question-item {
+                padding: 15px;
+            }
+
+            .question-title {
+                font-size: 1rem;
+            }
+
+            .question-desc {
+                font-size: 0.9rem;
+            }
+
+            .score-number {
+                font-size: 2.5rem;
+            }
+
+            .score-verdict {
+                font-size: 1rem;
+            }
+
+            .ai-tips {
+                grid-template-columns: 1fr;
+            }
+
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .emoji-decoration {
+                display: none;
+            }
+
+            body {
+                padding-bottom: 100px;
+            }
+
+            /* Fix for iOS Safari */
+            .score-input {
+                font-size: 16px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-nav {
+                display: none;
+            }
+
+            .ai-tips {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .resources-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .nav-tab,
+            .btn,
+            .question-item,
+            .resource-card,
+            .ai-tip-card,
+            .modal-close,
+            .mobile-nav-tab {
+                min-height: 48px;
+            }
+
+            .score-input {
+                min-height: 48px;
+                font-size: 1.2rem;
+            }
+
+            .custom-checkbox {
+                min-width: 24px;
+                min-height: 24px;
+            }
+        }
+
+        /* Fix for input number arrows on mobile */
+        .score-input::-webkit-outer-spin-button,
+        .score-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .score-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Active states for better feedback */
+        .question-item:active {
+            transform: translateX(5px);
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        }
+
+        .nav-tab:active,
+        .mobile-nav-tab:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Emoji decorations (hidden on mobile) -->
+    <div class="emoji-decoration" style="top: 10%; left: 5%;">🔍</div>
+    <div class="emoji-decoration" style="top: 20%; right: 10%;">📚</div>
+    <div class="emoji-decoration" style="top: 60%; left: 8%;">✅</div>
+    <div class="emoji-decoration" style="top: 70%; right: 5%;">🛡️</div>
+    <div class="emoji-decoration" style="top: 85%; left: 15%;">💡</div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-img-container">
+                <img src="https://image.qwenlm.ai/public_source/739f0e13-5522-4d8b-824d-cb32101b52d0/139a0157d-809b-4995-b9b3-e8a3c0ee1eba.png" alt="Жираф-эксперт" class="header-img" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding: 40px; font-size: 4rem;\'>🦒</div>'">
+            </div>
+            <h1>🔍 Проверка Источников</h1>
+            <p>Интерактивный чек-лист для подростков. Научись отличать правду от вымысла!</p>
+        </header>
+
+        <!-- Desktop Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-section="questions">📋 7 Вопросов</button>
+            <button class="nav-tab" data-section="scoring">⭐ Оценка</button>
+            <button class="nav-tab" data-section="ai">🤖 Работа с ИИ</button>
+            <button class="nav-tab" data-section="resources">📚 Ресурсы</button>
+        </nav>
+
+        <!-- Section 1: 7 Questions -->
+        <section id="questions" class="section active">
+            <div class="card">
+                <h2>❓ 7 Вопросов для Проверки Источника</h2>
+                <p style="margin-bottom: 20px; color: #666; font-size: 0.95rem;">Прежде чем использовать информацию в своей работе, задай эти вопросы:</p>
+
+                <div class="question-item">
+                    <span class="question-number">1</span>
+                    <div class="question-title">Когда это написано?</div>
+                    <div class="question-desc">Информация свежая или устаревшая? Для быстро меняющихся тем (технологии, медицина, политика) нужны источники не старше 2-3 лет.</div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" class="custom-checkbox" id="q1-check">
+                        <label for="q1-check" class="checkbox-label">Я проверил дату публикации</label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <span class="question-number">2</span>
+                    <div class="question-title">Кто автор и можно ли ему доверять?</div>
+                    <div class="question-desc">Указано ли имя автора? Есть ли у него образование/опыт в этой области? Можно ли найти информацию о нём?</div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" class="custom-checkbox" id="q2-check">
+                        <label for="q2-check" class="checkbox-label">Я проверил автора</label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <span class="question-number">3</span>
+                    <div class="question-title">Где это опубликовано?</div>
+                    <div class="question-desc">Это официальный сайт, научный журнал, проверенное издание — или случайный блог, форум, соцсеть?</div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" class="custom-checkbox" id="q3-check">
+                        <label for="q3-check" class="checkbox-label">Я проверил место публикации</label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <span class="question-number">4</span>
+                    <div class="question-title">Есть ли доказательства?</div>
+                    <div class="question-desc">Автор приводит факты, цифры, ссылки на исследования — или просто высказывает мнение?</div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" class="custom-checkbox" id="q4-check">
+                        <label for="q4-check" class="checkbox-label">Я проверил доказательства</label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <span class="question-number">5</span>
+                    <div class="question-title">Можно ли проверить информацию в других источниках?</div>
+                    <div class="question-desc">Ты нашёл эту же информацию хотя бы в 2-3 других надёжных местах?</div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" class="custom-checkbox" id="q5-check">
+                        <label for="q5-check" class="checkbox-label">Я перепроверил в других источниках</label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <span class="question-number">6</span>
+                    <div class="question-title">Зачем это написано?</div>
+                    <div class="question-desc">Автор хочет проинформировать, научить — или продать, убедить, манипулировать?</div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" class="custom-checkbox" id="q6-check">
+                        <label for="q6-check" class="checkbox-label">Я понял цель автора</label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <span class="question-number">7</span>
+                    <div class="question-title">Подходит ли это для твоей задачи?</div>
+                    <div class="question-desc">Информация отвечает на твой вопрос или ты пытаешься «натянуть» её под тему?</div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" class="custom-checkbox" id="q7-check">
+                        <label for="q7-check" class="checkbox-label">Информация подходит для моей задачи</label>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <button class="btn" id="btn-go-scoring">Перейти к Оценке →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Scoring -->
+        <section id="scoring" class="section">
+            <div class="card">
+                <h2>⭐ Таблица Оценки Источника</h2>
+                <p style="margin-bottom: 20px; color: #666; font-size: 0.95rem;">Оцени источник по каждому критерию от 0 до 2 баллов, подсчитай сумму и сделай вывод.</p>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <p style="text-align: center; margin-bottom: 15px; font-size: 0.9rem;">Прогресс заполнения: <span id="progress-text">0</span>%</p>
+
+                <div class="scoring-table-wrapper">
+                    <table class="scoring-table">
+                        <thead>
+                            <tr>
+                                <th>Критерий</th>
+                                <th>0 баллов</th>
+                                <th>1 балл</th>
+                                <th>2 балла</th>
+                                <th>Твоя оценка</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Актуальность</strong></td>
+                                <td>Старше 5 лет / дата неизвестна</td>
+                                <td>3-5 лет назад</td>
+                                <td>Свежее (до 2 лет)</td>
+                                <td><input type="number" class="score-input" data-criterion="актуальность" min="0" max="2" value="0" inputmode="numeric"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Автор</strong></td>
+                                <td>Автор не указан или неизвестен</td>
+                                <td>Автор известен, но нет подтверждения компетентности</td>
+                                <td>Эксперт с образованием/опытом в теме</td>
+                                <td><input type="number" class="score-input" data-criterion="автор" min="0" max="2" value="0" inputmode="numeric"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Источник публикации</strong></td>
+                                <td>Блог, форум, соцсеть</td>
+                                <td>Новостной сайт, популярный портал</td>
+                                <td>Научный журнал, официальный сайт, университет</td>
+                                <td><input type="number" class="score-input" data-criterion="источник" min="0" max="2" value="0" inputmode="numeric"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Доказательства</strong></td>
+                                <td>Только мнения, без фактов</td>
+                                <td>Есть факты, но мало ссылок</td>
+                                <td>Много фактов, цифр, ссылок на исследования</td>
+                                <td><input type="number" class="score-input" data-criterion="доказательства" min="0" max="2" value="0" inputmode="numeric"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Цель</strong></td>
+                                <td>Продать, манипулировать</td>
+                                <td>Развлечь, высказать мнение</td>
+                                <td>Проинформировать, научить</td>
+                                <td><input type="number" class="score-input" data-criterion="цель" min="0" max="2" value="0" inputmode="numeric"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <button class="btn" id="btn-calculate">Рассчитать Результат</button>
+                </div>
+
+                <div class="score-display" id="score-display" style="display: none;">
+                    <div>Ваш результат:</div>
+                    <div class="score-number" id="score-number">0</div>
+                    <div>баллов из 10</div>
+                    <div class="score-verdict" id="score-verdict">Ожидание...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: AI Tips -->
+        <section id="ai" class="section">
+            <div class="card">
+                <h2>🤖 Как Работать с Нейросетями</h2>
+                <p style="margin-bottom: 20px; color: #666; font-size: 0.95rem;">Три правила, если задаёшь вопрос нейросети:</p>
+
+                <div class="ai-tips">
+                    <div class="ai-tip-card">
+                        <div class="ai-tip-icon">🌍</div>
+                        <div class="ai-tip-title">1. Уточняй контекст и регион</div>
+                        <div class="ai-tip-desc">Не просто «расскажи про пожарную безопасность», а «расскажи про правила пожарной безопасности в России для школьников».</div>
+                    </div>
+
+                    <div class="ai-tip-card">
+                        <div class="ai-tip-icon">📎</div>
+                        <div class="ai-tip-title">2. Проси указывать источники</div>
+                        <div class="ai-tip-desc">Добавь в запрос: «Используй только официальные источники и укажи ссылки на них».</div>
+                    </div>
+
+                    <div class="ai-tip-card">
+                        <div class="ai-tip-icon">✅</div>
+                        <div class="ai-tip-title">3. Всегда проверяй ответ</div>
+                        <div class="ai-tip-desc">Открой указанные источники и сверь информацию. Если ссылок нет — ищи подтверждение на официальных сайтах.</div>
+                    </div>
+                </div>
+
+                <div class="red-flags">
+                    <h3>🚩 Красные Флаги (что должно насторожить)</h3>
+                    
+                    <div class="red-flag-item">
+                        <span class="red-flag-icon">⚠️</span>
+                        <div>
+                            <strong>Нейросеть не указала источники</strong>
+                            <br>Значит, информацию невозможно проверить
+                        </div>
+                    </div>
+
+                    <div class="red-flag-item">
+                        <span class="red-flag-icon">⚠️</span>
+                        <div>
+                            <strong>Ответы разных нейросетей сильно отличаются</strong>
+                            <br>Значит, тема спорная или ИИ «выдумывают»
+                        </div>
+                    </div>
+
+                    <div class="red-flag-item">
+                        <span class="red-flag-icon">⚠️</span>
+                        <div>
+                            <strong>Нейросеть ссылается на источники, которые не открываются или не существуют</strong>
+                            <br>ИИ могла «придумать» ссылку
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px; background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);">
+                    <h3 style="margin-bottom: 12px; color: var(--dark);">💡 Совет</h3>
+                    <p style="font-size: 0.95rem; line-height: 1.6; color: #333;">Используй нейросети как помощника для первого знакомства с темой, но всегда проверяй информацию по надёжным источникам (научные базы, официальные сайты, проверенные издания).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Resources -->
+        <section id="resources" class="section">
+            <div class="card">
+                <h2>📚 Полезные Ресурсы</h2>
+                <p style="margin-bottom: 20px; color: #666; font-size: 0.95rem;">Для поиска надёжных источников:</p>
+
+                <div class="resources-grid">
+                    <a href="https://scholar.google.com" target="_blank" rel="noopener" class="resource-card">
+                        <div class="resource-icon">🎓</div>
+                        <div class="resource-name">Google Scholar</div>
+                        <div class="resource-url">scholar.google.com</div>
+                        <p style="margin-top: 8px; color: #666; font-size: 0.85rem;">Научные статьи на всех языках</p>
+                    </a>
+
+                    <a href="https://cyberleninka.ru" target="_blank" rel="noopener" class="resource-card">
+                        <div class="resource-icon">📖</div>
+                        <div class="resource-name">CyberLeninka</div>
+                        <div class="resource-url">cyberleninka.ru</div>
+                        <p style="margin-top: 8px; color: #666; font-size: 0.85rem;">Научные статьи на русском языке</p>
+                    </a>
+
+                    <a href="https://mchs.gov.ru" target="_blank" rel="noopener" class="resource-card">
+                        <div class="resource-icon">🏛️</div>
+                        <div class="resource-name">Официальные сайты</div>
+                        <div class="resource-url">МЧС, Минздрав, Минобрнауки</div>
+                        <p style="margin-top: 8px; color: #666; font-size: 0.85rem;">Государственные органы РФ</p>
+                    </a>
+
+                    <a href="https://lektorium.tv" target="_blank" rel="noopener" class="resource-card">
+                        <div class="resource-icon">🎬</div>
+                        <div class="resource-name">Lektorium</div>
+                        <div class="resource-url">lektorium.tv</div>
+                        <p style="margin-top: 8px; color: #666; font-size: 0.85rem;">Видеолекции экспертов</p>
+                    </a>
+
+                    <a href="https://iprbooks.ru" target="_blank" rel="noopener" class="resource-card">
+                        <div class="resource-icon">📚</div>
+                        <div class="resource-name">IPRbooks</div>
+                        <div class="resource-url">iprbooks.ru</div>
+                        <p style="margin-top: 8px; color: #666; font-size: 0.85rem;">Учебная литература и материалы</p>
+                    </a>
+
+                    <a href="https://e-library.ru" target="_blank" rel="noopener" class="resource-card">
+                        <div class="resource-icon">🔬</div>
+                        <div class="resource-name">eLibrary.ru</div>
+                        <div class="resource-url">e-library.ru</div>
+                        <p style="margin-top: 8px; color: #666; font-size: 0.85rem;">Научная электронная библиотека</p>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);">
+                <h3 style="margin-bottom: 12px; color: var(--dark);">ℹ️ О Чек-листе</h3>
+                <p style="font-size: 0.95rem; line-height: 1.6; color: #333;">Этот чек-лист создан на основе CRAAP-теста и методологии научного исследования (Бакуменко В.Ч.)</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-tabs">
+            <button class="mobile-nav-tab active" data-section="questions">
+                <span class="mobile-nav-icon">📋</span>
+                <span>Вопросы</span>
+            </button>
+            <button class="mobile-nav-tab" data-section="scoring">
+                <span class="mobile-nav-icon">⭐</span>
+                <span>Оценка</span>
+            </button>
+            <button class="mobile-nav-tab" data-section="ai">
+                <span class="mobile-nav-icon">🤖</span>
+                <span>ИИ</span>
+            </button>
+            <button class="mobile-nav-tab" data-section="resources">
+                <span class="mobile-nav-icon">📚</span>
+                <span>Ресурсы</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Result Modal -->
+    <div class="modal" id="result-modal">
+        <div class="modal-content">
+            <div class="modal-emoji" id="modal-emoji">🎉</div>
+            <h3 class="modal-title" id="modal-title">Отлично!</h3>
+            <p class="modal-message" id="modal-message">Вы набрали достаточное количество баллов.</p>
+            <button class="modal-close" id="modal-close-btn">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Navigation - Desktop
+            const desktopTabs = document.querySelectorAll('.nav-tab');
+            desktopTabs.forEach(function(tab) {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchSection(this.dataset.section);
+                });
+            });
+
+            // Navigation - Mobile
+            const mobileTabs = document.querySelectorAll('.mobile-nav-tab');
+            mobileTabs.forEach(function(tab) {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchSection(this.dataset.section);
+                });
+            });
+
+            // Go to scoring button
+            const goToScoringBtn = document.getElementById('btn-go-scoring');
+            if (goToScoringBtn) {
+                goToScoringBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchSection('scoring');
+                });
+            }
+
+            // Calculate score button
+            const calculateBtn = document.getElementById('btn-calculate');
+            if (calculateBtn) {
+                calculateBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    calculateScore();
+                });
+            }
+
+            // Score inputs
+            const scoreInputs = document.querySelectorAll('.score-input');
+            scoreInputs.forEach(function(input) {
+                input.addEventListener('input', function() {
+                    let val = parseInt(this.value);
+                    if (isNaN(val) || val < 0) this.value = 0;
+                    if (val > 2) this.value = 2;
+                    updateProgress();
+                });
+
+                input.addEventListener('change', function() {
+                    if (this.value === '' || this.value === null) this.value = 0;
+                });
+            });
+
+            // Modal close button
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', closeModal);
+            }
+
+            // Close modal on outside click
+            const modal = document.getElementById('result-modal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal();
+                    }
+                });
+            }
+
+            // Initialize progress
+            updateProgress();
+        }
+
+        // Switch section function
+        function switchSection(sectionId) {
+            // Update desktop tabs
+            document.querySelectorAll('.nav-tab').forEach(function(t) {
+                t.classList.remove('active');
+                if (t.dataset.section === sectionId) {
+                    t.classList.add('active');
+                }
+            });
+
+            // Update mobile tabs
+            document.querySelectorAll('.mobile-nav-tab').forEach(function(t) {
+                t.classList.remove('active');
+                if (t.dataset.section === sectionId) {
+                    t.classList.add('active');
+                }
+            });
+
+            // Update sections
+            document.querySelectorAll('.section').forEach(function(s) {
+                s.classList.remove('active');
+            });
+
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const inputs = document.querySelectorAll('.score-input');
+            let filled = 0;
+            inputs.forEach(function(input) {
+                const val = parseInt(input.value);
+                if (!isNaN(val) && val > 0) filled++;
+            });
+            const progress = (filled / inputs.length) * 100;
+            
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+            }
+            if (progressText) {
+                progressText.textContent = Math.round(progress);
+            }
+        }
+
+        // Calculate score
+        function calculateScore() {
+            const inputs = document.querySelectorAll('.score-input');
+            let total = 0;
+            inputs.forEach(function(input) {
+                const val = parseInt(input.value);
+                if (!isNaN(val)) {
+                    total += val;
+                }
+            });
+
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreNumber = document.getElementById('score-number');
+            const scoreVerdict = document.getElementById('score-verdict');
+
+            if (scoreDisplay) {
+                scoreDisplay.style.display = 'block';
+            }
+
+            if (scoreNumber) {
+                scoreNumber.textContent = total;
+            }
+
+            let verdict, verdictClass, emoji;
+            if (total >= 8) {
+                verdict = 'Надёжный источник, можно использовать';
+                verdictClass = 'verdict-good';
+                emoji = '✅';
+            } else if (total >= 5) {
+                verdict = 'Сомнительный источник, нужна перекрёстная проверка';
+                verdictClass = 'verdict-warning';
+                emoji = '⚠️';
+            } else {
+                verdict = 'Ненадёжный источник, лучше не использовать';
+                verdictClass = 'verdict-bad';
+                emoji = '❌';
+            }
+
+            if (scoreVerdict) {
+                scoreVerdict.textContent = verdict;
+                scoreVerdict.className = 'score-verdict ' + verdictClass;
+            }
+
+            // Show modal
+            const modalEmoji = document.getElementById('modal-emoji');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+            const modal = document.getElementById('result-modal');
+
+            if (modalEmoji) modalEmoji.textContent = emoji;
+            if (modalTitle) modalTitle.textContent = total >= 8 ? 'Отлично!' : (total >= 5 ? 'Внимание!' : 'Осторожно!');
+            if (modalMessage) modalMessage.textContent = 'Вы набрали ' + total + ' баллов из 10. ' + verdict;
+            if (modal) modal.classList.add('active');
+
+            // Scroll to result
+            setTimeout(function() {
+                if (scoreDisplay) {
+                    scoreDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 500);
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('result-modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // Prevent zoom on double tap
+        document.addEventListener('dblclick', function(event) {
+            event.preventDefault();
+        }, { passive: false });
+
+        // Prevent pull-to-refresh on mobile
+        document.body.addEventListener('touchmove', function(e) {
+            if (e.touches[0].clientY < 10 && window.scrollY === 0) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
+
